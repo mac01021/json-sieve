@@ -36,6 +36,11 @@
 
 
 
+
+
+(def display);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; This stage prints the AST to the console for visual inspection.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn- print-with-tabs [tab-level s]
   (dotimes [_ tab-level]
     (print \tab))
@@ -71,9 +76,22 @@
   (println delim)
   ast)
 
+
+
+
+
+(def enclose-in-and);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Wrap the AST in an enclosing AND
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defstage enclose-in-and [ast]
   (update ast :children (partial cons (->Fragment nil "and"))))
 
+
+
+
+(def tag-conjunctions);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Convert leading fragments into keywords
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn- tag-cjx-header [fragment]
   (let [pos (:pos fragment)
@@ -91,7 +109,6 @@
       :else       (->CompilerError "invalid conjunction"
                                    (:pos fragment)))))
 
-(def tag-conjunctions)
 
 (defn- tag-cjx-hd-and-tail [children]
   (cons (->> children (first) (tag-cjx-header))
@@ -108,11 +125,28 @@
     :else                            (validate (update ast :children tag-cjx-hd-and-tail))))
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(def elevate-cjx-tags);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Convert each conjunction to a typed conjunction based on its leading keyword
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (def elevator {AndKw ->AndCjx
                OrKw  ->OrCjx
                NotKw ->NotCjx})
 
-(def elevate-cjx-tags)
 
 (defn- elevate-cjx-tag [cjx]
   (let [kids (:children cjx)
@@ -134,6 +168,12 @@
     :else           (-> ast (elevate-cjx-tag) (validate))))
 
 
+
+
+
+(def codegen);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Generate a clojure form from the AST
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defstage codegen [ast]
   `(fn [_#] true))
