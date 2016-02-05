@@ -33,4 +33,32 @@ the starting offsets of the last 1000 log segments leading up to the given insta
 
 ## The filter language
 
-Hi
+A test is one of
+
+- a string match, eg `foozles`, `"foozles and woozles"`
+- a field check,  eg `pckMsg.stdEnvelope.guid = abcd-1234-gfhij`, `timestamp="2016-01-02T23:55:03.041Z"`
+- a conjuction of simpler tests
+
+Regexp matches as a test type will be supported in the near future if we actually use this thing.
+
+A conjunction can be any of
+
+- `(or {test1} {test2} {test3} ...)`
+- `(and {test1} {test2} ...)`
+- `(not {test})`
+
+Field checks only work if the log event comes as a json object, and can be dotted out to arbitray depths.
+
+A filter string consistes of a list of tests, which are wrapped in an implicit `and` for evaluation.
+Whitespace matters not.  Here's a contrived example of a filter.
+
+    (or host = dp-dev-svc0-1.dev.dp.pvt
+        host = dp-dev-svc0-2.dev.dp.pvt
+        host = dp-dev-svc0-2.dev.dp.pvt)
+        
+    app = coordinator-fightmetric
+    
+    "Oh no!  The processor timed out while it was running queries!"
+    
+This is a single filter and will only admit events that are from the specified app, running on one of the three specified hosts, and contain the specified string content.
+
