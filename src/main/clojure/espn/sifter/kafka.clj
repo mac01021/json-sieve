@@ -16,10 +16,9 @@
                  (fn [] (get-cxtr *brokers* *client-id* *cxn-pool-size*))))
 
 (defn unmarshal [s]
-  (try (json/read-str s :key-fn keyword)
-    (catch Exception e
-      (println "Unparseable log event:" s)
-      s)))
+  (try {:struct (json/read-str s :key-fn keyword)
+        :raw    s}
+    (catch Exception e {:raw s})))
 
 
 

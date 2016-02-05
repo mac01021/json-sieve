@@ -1,8 +1,10 @@
 (ns espn.sifter.sessions
   (:require [clojure.data.json :as json]
             [org.httpkit.server :refer [send!]]
-            espn.sifter.kafka :as kafka)
-  (:import (java.util.concurrent CancellationException)))
+            [espn.sifter.kafka :as kafka]
+            [espn.sifter.compiler.main :refer [compile-filter]])
+  (:import (java.util.concurrent CancellationException)
+           (espn.sifter.compiler.error CompilerError)))
 
 (def SESSIONS (atom {}))
 
@@ -18,6 +20,10 @@
   "Convert the data structure `msg` to a json string and send it as a message on the session's websocket"
   [session msg]
   (send! (session :socket) (json/write-str msg)))
+
+(defn- maybe-send-event [session filt event]
+  (when (filt (:event event))
+    (send-json! session event)))
 
 (defmacro start-future
   "
@@ -60,16 +66,25 @@
   "
   [session req]
   (start-future session
-     (kafka/for-block  (req :instant) (partial send-json! session))
-     (send-json! session {:end-block (req :instant)})))
+     (let [_ (println "The filter is" (:filter req))
+           f (compile-filter (:filter req))]
+       (if (instance? CompilerError f)
+         (send-json! session f)
+         (do (kafka/for-block  (:instant req) #(maybe-send-event session f %))
+             (send-json! session {:end-block (:instant req)}))))))
 
-(defn- start-tail [session _req]
+
+(defn- start-tail [session req]
   "
   Start tailing the kafka topic and send an event on the session's websocket
   for every kafka message that satisfies the requested filter
   "
   (start-future session
-     (kafka/for-tail (partial send-json! session))))
+     (let [_ (println "The filter is" (:filter req))
+           f (compile-filter (:filter req))]
+       (if (instance? CompilerError f)
+         (send-json! session f)
+         (kafka/for-tail #(maybe-send-event session f %))))))
 
 
 (defn handle-request

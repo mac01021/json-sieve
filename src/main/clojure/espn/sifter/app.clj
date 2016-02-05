@@ -9,8 +9,8 @@
                                         on-close
                                         send!
                                         run-server]]
-            espn.sifter.sessions :as sessions
-            espn.sifter.kafka :as kafka))
+            [espn.sifter.sessions :as sessions]
+            [espn.sifter.kafka :as kafka]))
 
 
 (defn connection-handler [req]
@@ -47,6 +47,9 @@
 
 
 (def stop-server (run-server #'the-routes {:port 5555}))
+
+
+
 (stop-server)
 
 

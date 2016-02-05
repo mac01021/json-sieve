@@ -89,6 +89,7 @@
 
 (defstate <start-string>
   (push-string)
+  (integrate-char \")
   <in-string>)
 
 
@@ -112,6 +113,7 @@
 
 
 (defstate <end-string>
+  (integrate-char \")
   (pop-atom)
   <parse>)
 
