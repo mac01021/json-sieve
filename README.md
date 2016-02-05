@@ -36,7 +36,7 @@ the starting offsets of the last 1000 log segments leading up to the given insta
 A test is one of
 
 - a string match, eg `foozles`, `"foozles and woozles"`
-- a field check,  eg `pckMsg.stdEnvelope.guid = abcd-1234-gfhij`, `timestamp="2016-01-02T23:55:03.041Z"`
+- a field check,  eg `pckMsg.stdEnvelope.guid = abcd-1234-gfhij`, `timestamp="2016-01-02T23:55:03.041Z", level=INFO`
 - a conjuction of simpler tests
 
 Regexp matches as a test type will be supported in the near future if we actually use this thing.
