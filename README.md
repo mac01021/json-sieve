@@ -31,6 +31,25 @@ with its offset number so that the client will be able to figure out what it nee
 - `block` (coming soon) requires `instant`, and will cause the server to send a list of
 the starting offsets of the last 1000 log segments leading up to the given instant.
 
+## Event messages
+
+Every log event sent in response to a `fetch` or `tail` request has the following
+structure:
+
+    { "offset": 12345,
+      "event": {
+            "raw": "log message contents",
+            "struct": { ... }
+
+      }}
+
+* The `offset` key corresponds to the offset of the event in Kafka.
+* The `event` key contains the contents of the event itself.
+    - `raw` is just a string containing whatever message was in Kafka.
+    - `struct` will only be present if the message in Kafka was a valid JSON form.
+        When this is the case, it is that JSON form, but not embedded in a string.
+
+
 ## The filter language
 
 A test is one of
@@ -47,7 +66,8 @@ A conjunction can be any of
 - `(and {test1} {test2} ...)`
 - `(not {test})`
 
-Field checks only work if the log event comes as a json object, and can be dotted out to arbitray depths.
+Field checks only work if the `struct` field of the event is present.
+They are applied to the `struct` form, and can be dotted out to arbitray depths.
 
 A filter string consistes of a list of tests, which are wrapped in an implicit `and` for evaluation.
 Whitespace matters not.  Here's a contrived example of a filter.

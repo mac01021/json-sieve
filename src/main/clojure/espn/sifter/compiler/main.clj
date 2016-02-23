@@ -1,6 +1,6 @@
 (ns espn.sifter.compiler.main
   (:require [clojure.string :refer [split]]
-            [clojure.edn :refer [read-string]]
+            [clojure.edn :as edn]
             [clojure.stacktrace :as trace]
             [espn.sifter.compiler.parser :as parser :refer [->Fragment]]
             [espn.sifter.compiler.error :refer [->CompilerError]]
@@ -298,7 +298,7 @@
                            (update :children (partial map check-strings))
                            (validate))
 
-            (instance? StringLiteral ast) (try (update ast :content read-string)
+            (instance? StringLiteral ast) (try (update ast :content edn/read-string)
                                                (catch Exception e
                                                  (->CompilerError "invalid string literal"
                                                                   (:pos ast))))

@@ -3,8 +3,16 @@
             [org.httpkit.server :refer [send!]]
             [espn.sifter.kafka :as kafka]
             [espn.sifter.compiler.main :refer [compile-filter]])
-  (:import (java.util.concurrent CancellationException)
-           (espn.sifter.compiler.error CompilerError)))
+  (:import (espn.sifter.compiler.error CompilerError)))
+
+
+(defn- dissoc-in [m ks]
+  (cond
+    (empty? ks)        (throw (new IllegalArgumentException "at least one key required"))
+    (= 1 (count ks))   (dissoc m (first ks))
+    :else              (update-in m (drop-last ks) dissoc (last ks))))
+
+
 
 (def SESSIONS (atom {}))
 
@@ -25,6 +33,16 @@
   (when (filt (:event event))
     (send-json! session event)))
 
+
+
+(defn- complain-about-msg
+  "Send the client a notification that the latest request was malformed"
+  [session req reason]
+  (send-json! session {:invalid-request req
+                       :reason reason}))
+
+
+
 (defmacro start-future
   "
   Stop the session's currently running job (if one is running) and then
@@ -40,17 +58,18 @@
 (defn- stop-future
   "Stop the session's currently running background job, if one is running"
   [session]
-  (when (some? (session :future))
-    (future-cancel (session :future))
-    (try @(session :future)
-         (catch CancellationException e nil))))
+  (let [sock    (get session :socket)
+        session (get @SESSIONS (:socket session))
+        fut     (get session :future)]
+    (cond
+      (some? fut)     (do (future-cancel (session :future))
+                          (try @(session :future)
+                           (catch Exception e nil))
+                          (swap! SESSIONS dissoc-in [sock :future])
+                          true)
 
+      :else           false)))
 
-(defn- complain-about-msg
-  "Send the client a notification that the latest request was malformed"
-  [session req reason]
-  (send-json! session {:invalid-request req
-                       :reason reason}))
 
 (defn destroy
   "End the session for the given websocket and release any associated resources"
@@ -90,9 +109,10 @@
 (defn handle-request
   "Handle the given request in the given socket's session"
   [req sock]
+  (let [session (session-for-socket sock)]
   (cond
-    (contains? req :fetch) (fetch-block (session-for-socket sock) req)
-    (contains? req :tail)  (start-tail  (session-for-socket sock) req)
-    (contains? req :pause) (stop-future (session-for-socket sock))
-    :else                  (complain-about-msg (session-for-socket sock) req "Command is not 'fetch', 'tail', or 'pause'")))
+    (contains? req :fetch) (fetch-block session req)
+    (contains? req :tail)  (start-tail  session req)
+    (contains? req :pause) (when-not (stop-future session) (complain-about-msg session req "Nothing to pause"))
+    :else                  (complain-about-msg session req "Command is not 'fetch', 'tail', or 'pause'"))))
 

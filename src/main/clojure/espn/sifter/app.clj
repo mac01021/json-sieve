@@ -45,13 +45,24 @@
 
 
 
+(def sifters (atom {}))
 
+(defn start
+   ([port]
+      (run-server #'the-routes {:port port}))
+   ([port name]
+     (swap! sifters assoc name (start port))))
 
-;(def stop-server (run-server #'the-routes {:port 5555}))
-;
-;
-;
-;(stop-server)
+(defn stop [name]
+  (let [s (@sifters name)]
+    (s)
+    (swap! sifters dissoc name)))
+
+(defn stop-all []
+  (doseq [[k v] @sifters]
+    (v)
+    (swap! sifters dissoc k)))
+
 
 
 (defn -main
