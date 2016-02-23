@@ -369,7 +369,7 @@
              (check-strings)
              (gen-expr)
              (gen-predicate)
-             ;(display "=================================================================")
+             (display "=================================================================")
              (gen-callable))
       (catch Exception e (trace/print-stack-trace e)))))
 
