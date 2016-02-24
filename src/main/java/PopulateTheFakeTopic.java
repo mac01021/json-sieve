@@ -10,7 +10,7 @@ import java.util.UUID;
  * Created by coolbetm on 1/30/16.
  */
 public class PopulateTheFakeTopic {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         KafkaProducer<Void, String> producer = new KafkaProducer<Void, String>(new HashMap<String, Object>(){{
             put("bootstrap.servers", "dp-dev-kb0-metadata.dev.dp.pvt:9092");
             put("key.serializer", StringSerializer.class);
@@ -22,6 +22,7 @@ public class PopulateTheFakeTopic {
             ProducerRecord<Void, String> record = new ProducerRecord<Void, String>("dp-coolbetm-fake-log-topic", null, event);
             producer.send(record);
             System.out.println(event);
+            Thread.sleep(2000);
         }
 
     }
