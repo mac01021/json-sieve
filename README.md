@@ -72,13 +72,13 @@ They are applied to the `struct` form, and can be dotted out to arbitray depths.
 A filter string consistes of a list of tests, which are wrapped in an implicit `and` for evaluation.
 Whitespace matters not.  Here's a contrived example of a filter.
 
-    (and (or host = dp-dev-svc0-1.dev.dp.pvt
-             host = dp-dev-svc0-2.dev.dp.pvt
-             host = dp-dev-svc0-2.dev.dp.pvt)
+    (and (or host = appserver-1.dev.corp.pvt
+             host = appserver-2.dev.corp.pvt
+             host = appserver-3.dev.corp.pvt)
         
-         app = coordinator-fightmetric
+         app = magical-rest-service
     
-         "Oh no!  The processor timed out while it was running queries!")
+         "Oh no!  My RPC call timed out!")
     
 This is a single filter and will only admit events that are from the specified app, running on one of the three specified hosts, and contain the specified string content.
 

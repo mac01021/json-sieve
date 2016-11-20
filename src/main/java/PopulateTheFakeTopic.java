@@ -6,9 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
-/**
- * Created by coolbetm on 1/30/16.
- */
 public class PopulateTheFakeTopic {
     public static void main(String[] args) throws Exception {
         KafkaProducer<Void, String> producer = new KafkaProducer<Void, String>(new HashMap<String, Object>(){{
