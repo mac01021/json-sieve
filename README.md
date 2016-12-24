@@ -58,7 +58,7 @@ A test is one of
 - a field check,  eg `pckMsg.stdEnvelope.guid = abcd-1234-gfhij`, `timestamp="2016-01-02T23:55:03.041Z", level=INFO`
 - a conjuction of simpler tests
 
-Regexp matches as a test type will be supported in the near future if we actually use this thing.
+Regexp matches as a test type may be supported in the near future.
 
 A conjunction can be any of
 
