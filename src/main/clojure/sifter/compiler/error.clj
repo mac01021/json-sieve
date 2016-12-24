@@ -1,4 +1,4 @@
-(ns espn.sifter.compiler.error)
+(ns sifter.compiler.error)
 
 
 (defrecord CompilerError [reason charno])

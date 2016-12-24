@@ -1,5 +1,5 @@
-(ns espn.sifter.compiler.parser
-  (:require [espn.sifter.compiler.error :refer [map->CompilerError]]))
+(ns sifter.compiler.parser
+  (:require [sifter.compiler.error :refer [map->CompilerError]]))
 
 (defrecord Conjunction [pos children])
 (defrecord EqualitySign [pos])

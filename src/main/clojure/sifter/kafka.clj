@@ -1,6 +1,6 @@
-(ns espn.sifter.kafka
+(ns sifter.kafka
   (:require [clojure.data.json :as json])
-  (:import (com.espn.data.kafka.raw SimplePoolingConsumerConnector Cursor SimpleMessageStreamer)
+  (:import (quartyard.kafka SimplePoolingConsumerConnector Cursor SimpleMessageStreamer)
            (org.apache.kafka.common TopicPartition)))
 
 (def ^:dynamic *brokers*)

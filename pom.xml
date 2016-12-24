@@ -2,7 +2,7 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.espn.data</groupId>
+    <groupId>quartyard</groupId>
     <artifactId>sifter</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>clojure</packaging>
@@ -21,7 +21,7 @@
             <version>1.7.0</version>
         </dependency>
         <dependency>
-            <groupId>com.espn.data</groupId>
+            <groupId>quartyard</groupId>
             <artifactId>kafka-client</artifactId>
             <version>0.1.11</version>
         </dependency>
@@ -75,7 +75,7 @@
 
 
                 <configuration>
-                    <mainClass>espn.sifter.app</mainClass>
+                    <mainClass>sifter.app</mainClass>
                     <sourceDirectories>
                         <sourceDirectory>src/main/clojure</sourceDirectory>
                     </sourceDirectories>

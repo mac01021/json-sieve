@@ -1,9 +1,9 @@
-(ns espn.sifter.sessions
+(ns sifter.sessions
   (:require [clojure.data.json :as json]
             [org.httpkit.server :refer [send!]]
-            [espn.sifter.kafka :as kafka]
-            [espn.sifter.compiler.main :refer [compile-filter]])
-  (:import (espn.sifter.compiler.error CompilerError)))
+            [sifter.kafka :as kafka]
+            [sifter.compiler.main :refer [compile-filter]])
+  (:import (sifter.compiler.error CompilerError)))
 
 
 (defn- dissoc-in [m ks]

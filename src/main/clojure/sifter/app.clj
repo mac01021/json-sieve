@@ -1,4 +1,4 @@
-(ns espn.sifter.app
+(ns sifter.app
   (:require [clojure.data.json :as json]
             [ring.util.response :as resp]
             [compojure.core :refer [defroutes GET POST]]
@@ -9,8 +9,8 @@
                                         on-close
                                         send!
                                         run-server]]
-            [espn.sifter.sessions :as sessions]
-            [espn.sifter.kafka :as kafka])
+            [sifter.sessions :as sessions]
+            [sifter.kafka :as kafka])
   (:gen-class))
 
 

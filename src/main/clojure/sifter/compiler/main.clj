@@ -1,11 +1,11 @@
-(ns espn.sifter.compiler.main
+(ns sifter.compiler.main
   (:require [clojure.string :refer [split]]
             [clojure.edn :as edn]
             [clojure.stacktrace :as trace]
-            [espn.sifter.compiler.parser :as parser :refer [->Fragment]]
-            [espn.sifter.compiler.error :refer [->CompilerError]])
-  (:import (espn.sifter.compiler.error CompilerError)
-           (espn.sifter.compiler.parser StringLiteral Fragment EqualitySign Conjunction)))
+            [sifter.compiler.parser :as parser :refer [->Fragment]]
+            [sifter.compiler.error :refer [->CompilerError]])
+  (:import (sifter.compiler.error CompilerError)
+           (sifter.compiler.parser StringLiteral Fragment EqualitySign Conjunction)))
 
 
 (defrecord AndKw [pos])
